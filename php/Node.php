@@ -1,6 +1,6 @@
 <?php
 
-namespace samyapp\hierarchical
+namespace samyapp\hierarchical;
 
 /**
  * A node in the hierarchy tree.
@@ -10,6 +10,9 @@ namespace samyapp\hierarchical
 class Node
 {
 	public $children = array();
+
+	public $totalDescendents = 0;
+
 	public $data = null;
 
 	/*
