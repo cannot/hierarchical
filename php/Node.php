@@ -9,8 +9,6 @@ namespace samyapp\hierarchical;
  */
 class Node
 {
-	public $children = array();
-
 	public $totalDescendents = 0;
 
 	public $data = null;
@@ -21,6 +19,8 @@ class Node
 	 * to avoid having to recalculate later.
 	 */
 	public $depth = 0;
+
+	public $children = array();
 
 	/**
 	 *

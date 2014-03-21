@@ -3,36 +3,24 @@
 namespace samyapp\hierarchical;
 
 /**
- * Transform a Node to a CSV line
+ * Transform an array to a CSV output
  */
 class CSVTransformer
 {
-	public $columnSeparator = ',';
-	public $encloseFieldsWith = '"';
+	public $delimiter = ',';
+	public $enclosure = '"';
 	public $includeColumnNames = true;
 
-	public function Start($node)
+	public function output($node_array, $file_pointer = null)
 	{
-		$fields = array();
-		foreach ($node->data as $key => $ignore) {
-			$fields[] = $this->encloseFieldsWith . 
-				str_replace($this->encloseFieldsWith, 
-					$this->encloseFieldsWith . $this->encloseFieldsWith, $key) .
-					$this->encloseFieldsWith;
+		if (null == $file_pointer) {
+			$file_pointer = fopen('php://output', 'w');
 		}
-		return join($this->columnSeparator,$fields);
-	}
-
-	public function Finish($node) { return '';}
-
-	public function Transform($node)
-	{
-		$fields = array();
-		foreach ($node->data as $key => $value) {
-			$fields[] = $this->encloseFieldsWith . 
-				str_replace($this->encloseFieldsWith, $this->encloseFieldsWith.$this->encloseFieldsWith, $value) . $this->encloseFieldsWith;
-			
+		if ( $this->includeColumnNames && count($node_array) > 0) {
+			fputcsv($file_pointer, array_keys($node_array[0]), $this->delimiter, $this->enclosure);
 		}
-		return join($this->columnSeparator,$fields);
+		foreach ($node_array as $item) {
+			fputcsv($file_pointer, $item, $this->delimiter, $this->enclosure);
+		}
 	}
 }

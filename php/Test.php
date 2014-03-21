@@ -2,10 +2,13 @@
 
 namespace samyapp\hierarchical;
 
+error_reporting(E_ALL);
+
 require dirname(__FILE__).'/Node.php';
 require dirname(__FILE__).'/Builder.php';
 require dirname(__FILE__).'/CSVTransformer.php';
 require dirname(__FILE__).'/AdjacencyListPreparer.php';
+require dirname(__FILE__).'/NestedSetPreparer.php';
 
 $data = array(
 array( 'depth' => 1, 'name' => 'root'),
@@ -21,12 +24,17 @@ array( 'depth' => 3, 'name' => 'grandchild3.2')
 );
 
 $builder = new Builder();
-$builder->build($data);
+$tree = $builder->build($data);
 
-$builder->prepare($builder->tree,new AdjacencyListPreparer());
+//$preparer = new AdjacencyListPreparer();
+$preparer = new NestedSetPreparer();
+$preparer->generatePrimaryKey = false;
+$output = array();
+$builder->walk($tree, $preparer, $output);
 
 $transformer = new CSVTransformer();
+$transformer->output($output);
 
-$builder->walk($builder->tree, $transformer);
+//$builder->walk($builder->tree, $transformer);
 
 

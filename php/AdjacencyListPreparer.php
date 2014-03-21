@@ -29,14 +29,16 @@ class AdjacencyListPreparer
 	/**
 	 * Works on assumption that it is called on each node as nodes are visited depth-first...
 	 */
-	public function prepare($node)
+	public function next($node, &$output_array)
 	{
+		$data = $node->data;
 		if ($this->generatePrimaryKey) {
-			$node->data[$this->primaryKeyName] = ++$this->previousPrimaryKey;
+			$data[$this->primaryKeyName] = ++$this->previousPrimaryKey;
 		}
 		$parent_id = $node->depth > 1 ? $this->parentIDStack[$node->depth-1] : null; 
-		$node->data[$this->parentKeyName] = $parent_id;
-		$this->parentIDStack[$node->depth] = $node->data[$this->primaryKeyName];
+		$data[$this->parentKeyName] = $parent_id;
+		$this->parentIDStack[$node->depth] = $data[$this->primaryKeyName];
+		$output_array[] = $data;
 	}
 }
 
