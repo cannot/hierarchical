@@ -2,6 +2,12 @@
 
 namespace samyapp\hierarchical;
 
+/**
+ * Workflow:
+ * 1) Build the tree, from some form of iterable
+ * 2) Create an output array from the tree
+ * 3) Convert that array to a suitable output format
+ */
 class Builder
 {
 	public $tree = null;
@@ -39,18 +45,36 @@ class Builder
 			if ($depth > $this->maxDepth) {
 				continue;
 			}
+			$data = $item;
+			unset($data[$this->inputDepthKey]);
 			if ($depth == $prev_depth) { // sibling 
-				$stack[$depth-1]->children[] = $stack[$depth] = new Node($item);
+				$stack[$depth-1]->children[] = $stack[$depth] = new Node($data, $depth);
 			}
 			else if ($depth < $prev_depth) {
-				$stack[$depth-1]->children[] = $stack[$depth] = new Node($item);
+				$stack[$depth-1]->children[] = $stack[$depth] = new Node($data, $depth);
 			}
 			else { // descendant of previous line
-				$stack[$prev_depth]->children[] = $stack[$depth] = new Node($item);
+				$stack[$prev_depth]->children[] = $stack[$depth] = new Node($data, $depth);
 			}
 			$prev_depth = $depth;
 		}
 	} 
+
+	public function prepare($node, $preparer)
+	{
+		$preparer->prepare($node);
+		foreach ($node->children as $n) {
+			$this->prepare($n, $preparer);
+		}
+	}
+
+	public function walk($node, $transformer)
+	{
+		foreach ($node->children as $item) {
+			echo $transformer->transform($item) . "\n";
+			$this->walk($item, $transformer);
+		}
+	}
 }
 
 

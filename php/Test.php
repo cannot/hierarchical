@@ -4,6 +4,8 @@ namespace samyapp\hierarchical;
 
 require dirname(__FILE__).'/Node.php';
 require dirname(__FILE__).'/Builder.php';
+require dirname(__FILE__).'/CSVTransformer.php';
+require dirname(__FILE__).'/AdjacencyListPreparer.php';
 
 $data = array(
 array( 'depth' => 1, 'name' => 'root'),
@@ -21,13 +23,10 @@ array( 'depth' => 3, 'name' => 'grandchild3.2')
 $builder = new Builder();
 $builder->build($data);
 
-walk($builder->tree);
+$builder->prepare($builder->tree,new AdjacencyListPreparer());
 
-function walk($node)
-{
-	foreach ($node->children as $item) {
-		echo str_repeat('-', $item->data['depth']) . $item->data['name'] . "\n";
-		walk($item);
-	}
-}
+$transformer = new CSVTransformer();
+
+$builder->walk($builder->tree, $transformer);
+
 

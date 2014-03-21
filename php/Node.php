@@ -15,12 +15,20 @@ class Node
 
 	public $data = null;
 
-	/*
+	/**
+	 * @var int The depth in the hierarchy of this node. 
+	 * Pre-calculated by the Builder when adding the node 
+	 * to avoid having to recalculate later.
+	 */
+	public $depth = 0;
+
+	/**
 	 *
 	 * @param array $data Optional array of data for this node
 	 */
-	public function __construct($data = null)
+	public function __construct($data = null, $depth = 0)
 	{
-		$this->data = $data;
+		$this->data = $data ? $data : array();
+		$this->depth = $depth;
 	}
 }
